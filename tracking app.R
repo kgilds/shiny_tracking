@@ -21,11 +21,11 @@ shinyApp(
     div(
       id = "form",
       
-      textInput("date", "Date:"),
+      dateInput("date", "Date:"),
       checkboxInput("posted_blog", "Blog Posted", FALSE),
-      sliderInput("time_spent", "In minutes", 0, 60, 2, ticks = FALSE),
+      numericInput("time_spent", "In minutes",0),
       selectInput("category", "category of work",
-                  c("",  "Get REAL", "Blog", "Meditation")),
+                  c("",  "Get REAL", "Blog", "Meditation", "R4DS", "Coding")),
       actionButton("submit", "Submit", class = "btn-primary")
       
       
