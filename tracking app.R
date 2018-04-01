@@ -1,4 +1,5 @@
 library(shiny)
+library(DT)
 
 
 fieldsAll <- c("date", "posted_blog", "time_spent", "category")
@@ -12,11 +13,27 @@ humanTime <- function() format(Sys.time(), "%Y%m%d-%H%M%OS")
 
 fieldsMandatory <- c("time_spent", "category")
 
+
+loadData <- function() {
+  files <- list.files(file.path(responsesDir), full.names = TRUE)
+  data <- lapply(files, read.csv, stringsAsFactors = FALSE)
+  data <- dplyr::bind_rows(data)
+  data <- dplyr::group_by(data,category)
+  data <- dplyr::summarise(data, avg_time = mean(time_spent))
+  data
+}
+
+options(DT.options = list(pageLength = 5, language = list(search = 'Filter:')))
+
 shinyApp(
   
   ui <- fluidPage(
     shinyjs::useShinyjs(),
     titlePanel("Time Tracker"),
+    
+    
+      DT::dataTableOutput("responsesTable"),
+   
     
     div(
       id = "form",
@@ -84,7 +101,13 @@ shinyApp(
       shinyjs::show("form")
       shinyjs::hide("thankyou_msg")
     })    
+  
     
+    output$responsesTable <- DT::renderDataTable(
+      loadData(),
+      rownames = FALSE,
+      options = list(searching = FALSE, lengthChange = FALSE)
+    )   
     
   }
   
